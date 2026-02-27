@@ -8,7 +8,8 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start:project": "nest start",
+    "start": "node dist/main.js",
     "dev": "nest start --watch",
     "start:microservice:dev": "ts-node -r tsconfig-paths/register src/microservice-main.ts",
     "start:microservice:prod": "node dist/microservice-main.js",
