@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { User } from '../../common/decorators/user.decorator';
+import { UserData } from '../../common/decorators/user.decorator';
 import { OrderItem } from '../../../generated/prisma';
 
 @Controller('api/v1/order')
@@ -12,7 +12,7 @@ export class OrderController {
   @UseGuards(JwtAuthGuard)
   async createOrder(
     @Body('orderItems') orderItems: OrderItem[],
-    @User('id') userId: string,
+    @UserData('id') userId: string,
   ) {
     await this.orderService.createOrder(userId, orderItems);
     return { success: true, message: 'Order created successfully' };
@@ -37,6 +37,17 @@ export class OrderController {
     };
   }
 
+  @Get('/latest-orders')
+  @UseGuards(JwtAuthGuard)
+  async latestOrders() {
+    const orders = await this.orderService.latestOrders();
+    return {
+      success: true,
+      message: 'Latest orders retrieved successfully',
+      data: orders,
+    };
+  }
+
   @Get('/daily-sells')
   @UseGuards(JwtAuthGuard)
   async dailySellsSummery() {
@@ -44,6 +55,17 @@ export class OrderController {
     return {
       success: true,
       message: 'Daily sells summery retrieved successfully',
+      data: result,
+    };
+  }
+
+  @Get('/sells-summary')
+  @UseGuards(JwtAuthGuard)
+  async sellsSummery() {
+    const result = await this.orderService.sellsSummery();
+    return {
+      success: true,
+      message: 'Sells summery retrieved successfully',
       data: result,
     };
   }

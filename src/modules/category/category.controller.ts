@@ -30,8 +30,14 @@ export class CategoryController {
 
   //all categories
   @Get('/all')
+  @UseGuards(JwtAuthGuard)
   async getAllCategories() {
-    return this.categoryService.getAllCategories();
+    const categories = await this.categoryService.getAllCategories();
+    return {
+      success: true,
+      message: 'Categories retrieved successfully',
+      data: categories,
+    };
   }
 
   //update category by id

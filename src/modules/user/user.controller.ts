@@ -87,11 +87,27 @@ export class UserController {
 
   //update user by user id
   @Patch('/update/:userId')
+  @UseGuards(JwtAuthGuard)
   async updateUser(@Param('userId') userId: string, @Body() data: User) {
     await this.userService.updateUser(userId, data);
     return {
       success: true,
       message: 'User updated successfully',
+    };
+  }
+
+  //update logged in user profile
+  @Patch('/my-profile')
+  @UseGuards(JwtAuthGuard)
+  async updateLoggedInUser(
+    @Body() data: User,
+    @Req() req: Request & { user: { id: string } },
+  ) {
+    const userId = req.user.id;
+    await this.userService.updateUser(userId, data);
+    return {
+      success: true,
+      message: 'Profile has been updated successfully',
     };
   }
 

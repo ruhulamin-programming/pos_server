@@ -59,7 +59,7 @@ model Product {
   price        Float
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
-  category     Category    @relation(fields: [categoryId], references: [id])
+  category     Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   orderItems   OrderItem[]
 
   @@map("products")
@@ -71,7 +71,7 @@ model Order {
   status     OrderStatus @default(PENDING)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
-  user       User        @relation(fields: [userId], references: [id])
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   orderItems OrderItem[]
 
   @@map("orders")
@@ -85,8 +85,8 @@ model OrderItem {
   subTotal  Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  order     Order    @relation(fields: [orderId], references: [id])
-  product   Product  @relation(fields: [productId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("order_items")
 }

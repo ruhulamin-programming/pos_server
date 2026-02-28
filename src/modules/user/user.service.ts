@@ -161,6 +161,7 @@ export class UserService {
         email: true,
         phoneNumber: true,
         address: true,
+        role: true,
       },
     });
     if (!user)

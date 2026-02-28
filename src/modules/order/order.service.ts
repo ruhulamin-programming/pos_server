@@ -41,6 +41,7 @@ export class OrderService {
         id: true,
         quantity: true,
         subTotal: true,
+        createdAt: true,
         order: {
           select: {
             id: true,
@@ -75,6 +76,41 @@ export class OrderService {
       },
       data: orders,
     };
+  }
+
+  //latest orders
+  async latestOrders() {
+    const orders = await this.prisma.orderItem.findMany({
+      select: {
+        id: true,
+        quantity: true,
+        subTotal: true,
+        createdAt: true,
+        order: {
+          select: {
+            id: true,
+            status: true,
+          },
+        },
+        product: {
+          select: {
+            id: true,
+            productName: true,
+            productImage: true,
+            category: {
+              select: {
+                id: true,
+                categoryName: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: 0,
+      take: 5,
+    });
+    return orders;
   }
 
   //daily sells summery
@@ -119,6 +155,61 @@ export class OrderService {
     return {
       totalSales: dailySells._sum.subTotal || 0,
       sellsCount,
+    };
+  }
+
+  //sells summery
+  async sellsSummery() {
+    const today = new Date();
+    const startOfDay = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    );
+    const endOfDay = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() + 1,
+    );
+
+    const todayRevenue = await this.prisma.orderItem.aggregate({
+      where: {
+        order: {
+          createdAt: {
+            gte: startOfDay,
+            lt: endOfDay,
+          },
+        },
+      },
+      _sum: {
+        subTotal: true,
+      },
+    });
+
+    const todaySells = await this.prisma.orderItem.count({
+      where: {
+        order: {
+          createdAt: {
+            gte: startOfDay,
+            lt: endOfDay,
+          },
+        },
+      },
+    });
+
+    const totalRevenue = await this.prisma.orderItem.aggregate({
+      _sum: {
+        subTotal: true,
+      },
+    });
+
+    const totalSells = await this.prisma.orderItem.count();
+
+    return {
+      totalRevenue: totalRevenue._sum.subTotal || 0,
+      totalSells,
+      todayRevenue: todayRevenue._sum.subTotal || 0,
+      todaySells,
     };
   }
 }
