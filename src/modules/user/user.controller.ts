@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Request } from 'express';
-import { TempUser, User } from './user.model';
+import { User } from './user.model';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
@@ -22,21 +22,11 @@ export class UserController {
 
   //send otp for account verification
   @Post('/create')
-  async createUser(@Body() data: TempUser) {
-    await this.userService.createUser(data);
+  async createUser(@Body() data: User) {
+    const result = await this.userService.createUser(data);
     return {
       success: true,
-      message: 'Email verification OTP sent successfully',
-    };
-  }
-
-  //verify user account with otp
-  @Post('/verify')
-  async verifyUser(@Body() data: { email: string; otp: string }) {
-    const result = await this.userService.verifyUser(data.email, data.otp);
-    return {
-      success: true,
-      message: 'User verified successfully',
+      message: 'User created successfully',
       data: result,
     };
   }

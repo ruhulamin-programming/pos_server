@@ -3,20 +3,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { TempUser, User } from './user.model';
+import { User } from './user.model';
 import bcrypt from 'bcryptjs';
 import { jwtHelpers } from '../../shared/jwt/jwtHelpers';
 import jwtConfig from '../../config/jwt.config';
 import { PrismaService } from '../../prisma.service';
 import { Prisma } from '../../../generated/prisma';
-import generateOTP from '../../shared/generateOtp';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   //send otp for account verification
-  async createUser(data: TempUser) {
+  async createUser(data: User) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -28,73 +27,16 @@ export class UserService {
     }
 
     const hashedPassword = bcrypt.hashSync(data.password, 10);
-    const otp = generateOTP();
-    const expireAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    await this.prisma.tempUser.upsert({
-      where: { email: data.email },
-      update: {
-        fullName: data.fullName,
-        phoneNumber: data.phoneNumber,
-        password: hashedPassword,
-        address: data.address,
-        otp,
-        expireAt,
-      },
-      create: {
+    const user = await this.prisma.user.create({
+      data: {
         fullName: data.fullName,
         email: data.email,
         phoneNumber: data.phoneNumber,
         password: hashedPassword,
         address: data.address,
-        otp,
-        expireAt,
       },
     });
-
-    return;
-  }
-
-  async verifyUser(email: string, otp: string) {
-    const tempUser = await this.prisma.tempUser.findUnique({
-      where: { email },
-    });
-    if (!tempUser) {
-      throw new NotFoundException({
-        success: false,
-        message: 'Temp user not found',
-      });
-    }
-    if (tempUser.otp !== otp) {
-      throw new ConflictException({
-        success: false,
-        message: 'Invalid OTP',
-      });
-    }
-    if (tempUser.expireAt < new Date()) {
-      throw new ConflictException({
-        success: false,
-        message: 'OTP expired',
-      });
-    }
-
-    const user = await this.prisma.$transaction(async (tx) => {
-      const user = await tx.user.create({
-        data: {
-          fullName: tempUser.fullName,
-          email: tempUser.email,
-          phoneNumber: tempUser.phoneNumber,
-          password: tempUser.password,
-          address: tempUser.address,
-        },
-      });
-
-      await tx.tempUser.delete({
-        where: { email },
-      });
-      return user;
-    });
-
     const accessToken = jwtHelpers.generateToken(
       { id: user.id, email: user.email, role: user.role },
       jwtConfig.jwt_secret as string,
