@@ -1,5 +1,5 @@
 import { IsDate, IsNotEmpty, IsString } from 'class-validator';
-import { UserRole } from 'generated/prisma';
+import { UserRole } from '../../generated/prisma';
 
 export class CreateUserDto {
   @IsString()

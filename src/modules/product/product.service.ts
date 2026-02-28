@@ -40,6 +40,41 @@ export class ProductService {
     };
   }
 
+  //get all products by category
+  async getProductsByCategory(page: number, limit: number, categoryId: string) {
+    const skip = (page - 1) * limit;
+    const products = await this.prisma.product.findMany({
+      where: {
+        categoryId,
+      },
+      include: {
+        category: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+      skip,
+    });
+
+    const totalCount = await this.prisma.product.count({
+      where: {
+        categoryId,
+      },
+    });
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return {
+      meta: {
+        page,
+        limit,
+        totalCount,
+        totalPages,
+      },
+      data: products,
+    };
+  }
+
   //get product details
   async getProductDetails(productId: string) {
     const product = await this.prisma.product.findUnique({

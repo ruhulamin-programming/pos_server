@@ -41,6 +41,25 @@ export class ProductController {
     };
   }
 
+  @Get('/category/:categoryId')
+  @UseGuards(JwtAuthGuard)
+  async getProductsByCategory(
+    @Param('categoryId') categoryId: string,
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ) {
+    const response = await this.productService.getProductsByCategory(
+      parseInt(page),
+      parseInt(limit),
+      categoryId,
+    );
+    return {
+      success: true,
+      message: 'Products retrieved successfully',
+      data: response,
+    };
+  }
+
   @Get('/details/:productId')
   @UseGuards(JwtAuthGuard)
   async getProductDetails(@Param('productId') productId: string) {
