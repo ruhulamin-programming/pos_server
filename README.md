@@ -62,6 +62,20 @@ Before you begin, ensure you have the following installed:
    npm run start
    ```
 
+## Login Credentials
+
+For testing purposes, you can use the following credentials:
+
+### Admin Access
+
+- **Email**: admin@gmail.com
+- **Password**: 123456
+
+### Cashier Access
+
+- **Email**: ruhulamin.cse56@gmail.com
+- **Password**: 123456
+
 ## Available Scripts
 
 - `npm run build`: Build the project using Nest CLI.
