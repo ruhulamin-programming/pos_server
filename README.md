@@ -6,6 +6,7 @@ A robust Point of Sale (POS) backend system built with [NestJS](https://nestjs.c
 
 - **Backend**: [https://pos-server-7ga3.onrender.com](https://pos-server-7ga3.onrender.com)
 - **Frontend**: [https://pos-frontend-kohl.vercel.app/](https://pos-frontend-kohl.vercel.app/)
+- **API Documentation (Postman)**: [https://documenter.getpostman.com/view/43366882/2sBXcHieUW](https://documenter.getpostman.com/view/43366882/2sBXcHieUW)
 
 ## Prerequisites
 
