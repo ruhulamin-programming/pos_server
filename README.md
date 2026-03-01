@@ -2,10 +2,10 @@
 
 A robust Point of Sale (POS) backend system built with [NestJS](https://nestjs.com/), [Prisma](https://www.prisma.io/), and [MongoDB](https://www.mongodb.com/).
 
-## Live URL
+## Live URLs
 
-The project is deployed and accessible at:
-[https://pos-server-7ga3.onrender.com](https://pos-server-7ga3.onrender.com)
+- **Backend**: [https://pos-server-7ga3.onrender.com](https://pos-server-7ga3.onrender.com)
+- **Frontend**: [https://pos-frontend-kohl.vercel.app/](https://pos-frontend-kohl.vercel.app/)
 
 ## Prerequisites
 
